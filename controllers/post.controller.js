@@ -89,7 +89,7 @@ const update = (req, res) => {
     content: { type: "string", optional: false, max: "2200" },
     categoryId: { type: "number", optional: false },
   };
-
+  //Esnure posts updates fit requirements
   const v = new Validator();
   const validationResponse = v.validate(updatedPost, schema);
   if (validationResponse !== true) {

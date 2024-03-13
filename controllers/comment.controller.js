@@ -1,6 +1,7 @@
 const Validator = require("fastest-validator");
 const models = require("../models");
 
+//Save comment
 const save = (req, res) => {
   const comment = {
     content: req.body.content,
@@ -13,6 +14,7 @@ const save = (req, res) => {
     postId: { type: "number", optional: false },
   };
 
+  //Validate comment fits requirements
   const v = new Validator();
   const validationResponse = v.validate(comment, schema);
 
@@ -22,7 +24,7 @@ const save = (req, res) => {
       errors: validationResponse,
     });
   }
-
+  //Use primary key to obtain single entry
   models.Post.findByPk(req.body.postId)
     .then((post) => {
       if (post === null) {
@@ -53,9 +55,10 @@ const save = (req, res) => {
     });
 };
 
+// show specific comment
 const show = (req, res) => {
   const id = req.params.id;
-
+  //find comment by primary key
   models.Comment.findByPk(id)
     .then((result) => {
       if (result) {
@@ -73,7 +76,9 @@ const show = (req, res) => {
     });
 };
 
+//show all comments
 const index = (req, res) => {
+  //list of all comments
   models.Comment.findAll()
     .then((result) => {
       res.status(200).json(result);
@@ -85,6 +90,7 @@ const index = (req, res) => {
     });
 };
 
+//update working comment
 const update = (req, res) => {
   const id = req.params.id;
   const updatedComment = {
@@ -96,7 +102,7 @@ const update = (req, res) => {
   const schema = {
     content: { type: "string", optional: false, max: "500" },
   };
-
+  // Ensure update fits requirements
   const v = new Validator();
   const validationResponse = v.validate(updatedComment, schema);
 
@@ -106,7 +112,7 @@ const update = (req, res) => {
       errors: validationResponse,
     });
   }
-
+  // Fit the comment with its corresponding ID and USERID
   models.Comment.update(updatedComment, { where: { id: id, userId: userId } })
     .then((result) => {
       res.status(200).json({
@@ -122,6 +128,7 @@ const update = (req, res) => {
     });
 };
 
+//Delete a comment
 const destroy = (req, res) => {
   const id = req.params.id;
   const userId = 1;

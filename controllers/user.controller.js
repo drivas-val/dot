@@ -20,18 +20,19 @@ const sighnUp = (req, res) => {
               password: hash,
             };
 
-            const schema = {
-              name: { type: "string", optional: false, max: "100" },
-              email: { type: "string", optional: false, max: "50" },
-              password: { type: "string", optional: false, max: "100" },
-            };
-
-            const v = new Validator();
-            const validationResponse = v.validate(user, schema);
-            if (validationResponse !== true) {
+            if (user.password.length > 64 || user.password.length < 1) {
               return res.status(400).json({
-                message: "validation failed",
-                error: validationResponse,
+                message: "Password parsing error!",
+              });
+            }
+            if (user.email.length > 64 || user.email.length < 1) {
+              return res.status(400).json({
+                message: "Email parsing error!",
+              });
+            }
+            if (user.name.length > 64 || user.name.length < 1) {
+              return res.status(400).json({
+                message: "Name parsing error!",
               });
             }
 
@@ -72,7 +73,7 @@ const login = (req, res) => {
                 email: user.email,
                 userId: user.userId,
               },
-              "secret",
+              process.env.JWT_KEY,
               (err, token) => {
                 res.status(200).json({
                   message: "Authentication Successful!",
